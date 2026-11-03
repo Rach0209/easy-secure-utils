@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>SecureWebUtils Live Demo</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 700px; margin: 40px auto; padding: 0 20px; line-height: 1.6; background-color: #f6f8fa; color: #24292e; }
+    h1 { border-bottom: 1px solid #e1e4e8; padding-bottom: 10px; }
+    .card { border: 1px solid #e1e4e8; border-radius: 8px; padding: 20px; margin-bottom: 20px; background: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    input[type="text"], input[type="file"], textarea { width: 100%; padding: 8px 12px; box-sizing: border-box; margin-top: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; font-family: inherit; }
+    textarea { font-family: monospace; min-height: 70px; }
+    .result { background: #f1f8ff; border: 1px solid #c8e1ff; padding: 12px; border-radius: 6px; margin-top: 10px; font-family: monospace; white-space: pre-wrap; word-break: break-all; font-size: 13px; color: #0366d6; }
+    .result.bad { background: #ffeef0; border-color: #fdaeb7; color: #cb2431; }
+    .result.ok { background: #f0fff4; border-color: #bef5cb; color: #22863a; }
+    code { background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-size: 85%; }
+    #loadError { display: none; }
+  </style>
+  <script src="./dist/easy-secure-utils.js" defer></script>
+  <script src="./demo.js" defer></script>
+</head>
+<body>
+
+  <h1>🛡️ SecureWebUtils Live Demo</h1>
+
+  <div class="result bad" id="loadError" role="alert">dist/easy-secure-utils.js 를 불러오지 못했습니다. 파일 경로와 콘솔 오류를 확인하세요.</div>
+  <noscript><div class="result bad">이 데모는 JavaScript 가 필요합니다.</div></noscript>
+
+  <!-- 1. XSS 방지 데모 -->
+  <div class="card">
+    <h3>1. XSS 방지 (escapeHTML)</h3>
+    <p>악성 입력(예: <code>&lt;img src=x onerror=alert(1)&gt;</code>)을 입력해 보세요. 아래는 <code>innerHTML</code> 에 <code>escapeHTML</code> 결과를 넣은 렌더링이며, 태그가 실행되지 않고 글자 그대로 보입니다.</p>
+    <input type="text" id="xssInput" aria-label="XSS 테스트 입력" placeholder="텍스트를 입력하세요..." autocomplete="off">
+    <div class="result" id="xssOutput" aria-live="polite">결과가 여기에 표시됩니다.</div>
+    <div class="result" id="xssEncoded" aria-live="polite">인코딩된 원문이 여기에 표시됩니다.</div>
+  </div>
+
+  <!-- 2. 실시간 디바운스 검색 데모 -->
+  <div class="card">
+    <h3>2. 디바운스 기반 실시간 검색 (debounce)</h3>
+    <p>입력이 끝난 후 300ms 뒤에만 요청이 트리거됩니다.</p>
+    <input type="text" id="searchInput" aria-label="검색어" placeholder="검색어 입력 중..." autocomplete="off">
+    <div class="result" id="searchOutput" aria-live="polite">대기 중...</div>
+  </div>
+
+  <!-- 3. 파일 용량 변환기 데모 -->
+  <div class="card">
+    <h3>3. 파일 크기 단위 자동 변환 (formatBytes)</h3>
+    <input type="file" id="fileInput" aria-label="파일 선택">
+    <div class="result" id="fileOutput" aria-live="polite">파일을 선택하세요.</div>
+  </div>
+
+  <!-- 4. URL 검증 데모 -->
+  <div class="card">
+    <h3>4. URL 안전성 검증 (isSafeURL)</h3>
+    <p><code>javascript:alert(1)</code>, <code>//evil.com</code>, <code>/&#92;t/evil.com</code>(탭 포함), <code>https://a@evil.com</code> 등을 입력해 보세요. 안전한 URL 일 때만 링크가 생성됩니다.</p>
+    <input type="text" id="urlInput" aria-label="URL 입력" placeholder="https://example.com" autocomplete="off">
+    <div class="result" id="urlOutput" aria-live="polite">URL 을 입력하세요.</div>
+  </div>
+
+  <!-- 5. JSON 파싱 데모 -->
+  <div class="card">
+    <h3>5. Prototype Pollution 방지 (safeJSONParse)</h3>
+    <textarea id="jsonInput" aria-label="JSON 입력" spellcheck="false">{"user":"kim","__proto__":{"isAdmin":true}}</textarea>
+    <div class="result" id="jsonOutput" aria-live="polite">JSON 을 입력하세요.</div>
+  </div>
+
+</body>
+</html>

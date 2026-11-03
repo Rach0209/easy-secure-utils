@@ -1,0 +1,44 @@
+{
+  "name": "easy-secure-utils",
+  "version": "1.0.0",
+  "description": "Zero-dependency security & performance helpers: XSS escaping, safe URL validation, prototype-pollution-safe JSON/clone, formatBytes, debounce.",
+  "keywords": [
+    "security",
+    "xss",
+    "escape-html",
+    "prototype-pollution",
+    "open-redirect",
+    "url-validation",
+    "debounce",
+    "zero-dependency"
+  ],
+  "license": "MIT",
+  "private": true,
+  "main": "./dist/easy-secure-utils.js",
+  "module": "./dist/easy-secure-utils.mjs",
+  "types": "./types/easy-secure-utils.d.ts",
+  "exports": {
+    ".": {
+      "types": "./types/easy-secure-utils.d.ts",
+      "import": "./dist/easy-secure-utils.mjs",
+      "require": "./dist/easy-secure-utils.js",
+      "default": "./dist/easy-secure-utils.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "types",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "node scripts/build.js",
+    "test": "node --test"
+  }
+}
