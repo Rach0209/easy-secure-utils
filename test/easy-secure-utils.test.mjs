@@ -25,6 +25,24 @@ test('dist 는 src 로부터의 최신 빌드와 동일하다 (npm run build 필
   const norm = (f) => fs.readFileSync(path.join(ROOT, 'dist', f), 'utf8').replace(/\r\n/g, '\n');
   assert.equal(norm('easy-secure-utils.js'), wantUmd);
   assert.equal(norm('easy-secure-utils.mjs'), wantEsm);
+  assert.equal(norm('integrity.json'), build().integrity);
+});
+
+test('integrity.json 의 SRI 해시가 디스크의 실제 dist 파일 바이트와 일치한다', async () => {
+  const { createHash } = await import('node:crypto');
+  const integrity = JSON.parse(fs.readFileSync(path.join(ROOT, 'dist', 'integrity.json'), 'utf8'));
+  assert.deepEqual(Object.keys(integrity).sort(), ['easy-secure-utils.js', 'easy-secure-utils.mjs']);
+  for (const [file, expected] of Object.entries(integrity)) {
+    // 브라우저는 서버가 보낸 바이트 그대로 해시한다 → 개행 변환 없이 디스크 바이트로 계산
+    const actual = 'sha384-' + createHash('sha384').update(fs.readFileSync(path.join(ROOT, 'dist', file))).digest('base64');
+    assert.equal(actual, expected, file);
+    assert.match(expected, /^sha384-[A-Za-z0-9+/]{64}$/);
+  }
+});
+
+test('package.json 의 files 목록이 실제로 존재하는 파일/폴더를 가리킨다', () => {
+  const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
+  for (const f of pkg.files) assert.ok(fs.existsSync(path.join(ROOT, f)), f + ' 없음 (npm/GitHub 설치 시 누락됨)');
 });
 
 test('package.json 버전 == 소스 배너 버전, exports 경로가 실제로 존재', () => {

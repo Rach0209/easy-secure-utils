@@ -1,19 +1,29 @@
 {
   "name": "easy-secure-utils",
-  "version": "1.0.0",
-  "description": "Zero-dependency security & performance helpers: XSS escaping, safe URL validation, prototype-pollution-safe JSON/clone, formatBytes, debounce.",
+  "version": "1.1.0",
+  "description": "Zero-dependency security & performance helpers: context-aware html`` escaping, safe URL validation, prototype-pollution-safe JSON/clone/merge, secure random tokens, debounce/throttle.",
   "keywords": [
     "security",
     "xss",
     "escape-html",
+    "html-template",
     "prototype-pollution",
     "open-redirect",
     "url-validation",
     "debounce",
+    "throttle",
     "zero-dependency"
   ],
   "license": "MIT",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rach0209/easy-secure-utils.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Rach0209/easy-secure-utils/issues"
+  },
+  "homepage": "https://github.com/Rach0209/easy-secure-utils#readme",
   "main": "./dist/easy-secure-utils.js",
   "module": "./dist/easy-secure-utils.mjs",
   "types": "./types/easy-secure-utils.d.ts",
@@ -31,14 +41,16 @@
     "types",
     "README.md",
     "LICENSE",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "SECURITY.md"
   ],
   "sideEffects": false,
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "scripts": {
     "build": "node scripts/build.js",
-    "test": "node --test"
+    "test": "node --test",
+    "typecheck": "npx --yes -p typescript@5 tsc -p tsconfig.json"
   }
 }

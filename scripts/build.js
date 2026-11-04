@@ -5,6 +5,7 @@
  */
 const fs = require('node:fs');
 const path = require('node:path');
+const crypto = require('node:crypto');
 
 const ROOT = path.join(__dirname, '..');
 const SRC = path.join(ROOT, 'src', 'easy-secure-utils.mjs');
@@ -45,15 +46,23 @@ function build() {
     ''
   ].join('\n');
 
-  return { umd, esm: src, names };
+  // 서브리소스 무결성(SRI) 해시: <script integrity="sha384-..."> 에 그대로 사용
+  const sri = (text) => 'sha384-' + crypto.createHash('sha384').update(text, 'utf8').digest('base64');
+  const integrity = JSON.stringify({
+    'easy-secure-utils.js': sri(umd),
+    'easy-secure-utils.mjs': sri(src)
+  }, null, 2) + '\n';
+
+  return { umd, esm: src, integrity, names };
 }
 
 module.exports = { build };
 
 if (require.main === module) {
-  const { umd, esm } = build();
+  const { umd, esm, integrity } = build();
   fs.mkdirSync(DIST, { recursive: true });
   fs.writeFileSync(path.join(DIST, 'easy-secure-utils.js'), umd);
   fs.writeFileSync(path.join(DIST, 'easy-secure-utils.mjs'), esm);
-  console.log('built dist/easy-secure-utils.js (UMD) and dist/easy-secure-utils.mjs (ESM)');
+  fs.writeFileSync(path.join(DIST, 'integrity.json'), integrity);
+  console.log('built dist/easy-secure-utils.js (UMD), dist/easy-secure-utils.mjs (ESM), dist/integrity.json (SRI)');
 }
